@@ -4,6 +4,27 @@
 #define NUM_ROWS 6
 #define NUM_KEYS 18
 
+#ifdef MIYOOMINI
+#define KEY_UP SDLK_UP
+#define KEY_DOWN SDLK_DOWN
+#define KEY_LEFT SDLK_LEFT
+#define KEY_RIGHT SDLK_RIGHT
+#define KEY_ENTER SDLK_SPACE // A
+#define KEY_TOGGLE SDLK_LCTRL // B
+#define KEY_BACKSPACE SDLK_t // R1
+#define KEY_SHIFT SDLK_e // L1
+#define KEY_LOCATION SDLK_LALT // Y
+#define KEY_ACTIVATE SDLK_LSHIFT // X
+#define KEY_QUIT SDLK_ESCAPE // MENU
+//#define KEY_HELP SDLK_RETURN // 
+#define KEY_TAB SDLK_RCTRL // SELECT
+#define KEY_RETURN SDLK_RETURN // START
+#define KEY_ARROW_LEFT	SDLK_TAB // L2
+#define KEY_ARROW_RIGHT	SDLK_BACKSPACE // R2
+//#define KEY_ARROW_UP	SDLK_KP_DIVIDE //
+//#define KEY_ARROW_DOWN	SDLK_KP_PERIOD //
+#else
+
 //#ifdef RS97
 
 #define KEY_UP SDLK_UP
@@ -39,6 +60,7 @@
 #define KEY_ACTIVATE SDLK_BACKQUOTE
 
 #endif*/
+#endif
 
 #define KMOD_SYNTHETIC (1 << 13)
 
@@ -85,16 +107,16 @@ static unsigned char toggled[NUM_ROWS][NUM_KEYS];
 static int selected_i = 0, selected_j = 0;
 static int shifted = 0;
 static int location = 0;
-static int active = 1;
 static int mod_state = 0;
-static int show_help = 1;
+int active = 1;
+int show_help = 1;
 
 void init_keyboard() {
 	for(int j = 0; j < NUM_ROWS; j++)
 		for(int i = 0; i < NUM_KEYS; i++)
 			toggled[j][i] = 0;
 	selected_i = selected_j = shifted = location = 0;
-	active = 1;
+//	active = 1;
 	mod_state = 0;
 
 }
@@ -105,16 +127,14 @@ char* help =
 "  A:  press key\n"
 "  B:  toggle key (useful for shift/ctrl...)\n"
 "  L1: shift\n"
-"  R2: backspace\n"
+"  R1: backspace\n"
 "  Y:  change keyboard location (top/bottom)\n"
 "  X:  show / hide keyboard\n"
-"  START:  enter\n"
-"  SELECT: tab\n"
-"  L2:     left\n"
-"  R2:     right\n"
-"  L3:     up\n"
-"  R3:     down\n"
-"  POWER:  quit\n\n"
+"  START:    enter\n"
+"  SELECT:   tab\n"
+"  L2:       left\n"
+"  R2:       right\n"
+"  MENU:     quit\n\n"
 "Cheatcheet (tutorial at www.shellscript.sh):\n"
 "  TAB key         complete path\n"
 "  UP/DOWN keys    navigate history\n"
@@ -135,7 +155,7 @@ void draw_keyboard(SDL_Surface* surface) {
 	unsigned short toggled_color = SDL_MapRGB(surface->format, 192, 192, 0);
 	if(show_help) {
 		SDL_FillRect(surface, NULL, text_color);
-		draw_string(surface, "SDL Terminal by Benob, based on st-sdl", 42, 10, sel_toggled_color);
+		draw_string(surface, "SDL Terminal by Benob, based on st-sdl", 0, 10, sel_toggled_color);
 		draw_string(surface, help, 8, 30, sel_color);
 		return;
 	}
@@ -291,10 +311,10 @@ int handle_keyboard_event(SDL_Event* event) {
 			location = !location;
 		} else if(event->key.keysym.sym == KEY_BACKSPACE) {
 			simulate_key(SDLK_BACKSPACE, STATE_TYPED);
-		} else if(event->key.keysym.sym == KEY_ARROW_UP) {
-			simulate_key(SDLK_UP, STATE_TYPED);
-		} else if(event->key.keysym.sym == KEY_ARROW_DOWN) {
-			simulate_key(SDLK_DOWN, STATE_TYPED);
+//		} else if(event->key.keysym.sym == KEY_ARROW_UP) {
+//			simulate_key(SDLK_UP, STATE_TYPED);
+//		} else if(event->key.keysym.sym == KEY_ARROW_DOWN) {
+//			simulate_key(SDLK_DOWN, STATE_TYPED);
 		} else if(event->key.keysym.sym == KEY_ARROW_LEFT) {
 			simulate_key(SDLK_LEFT, STATE_TYPED);
 		} else if(event->key.keysym.sym == KEY_ARROW_RIGHT) {
